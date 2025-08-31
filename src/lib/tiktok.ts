@@ -1,12 +1,29 @@
 export const TIKTOK_URL_REGEX = /^https?:\/\/www\.tiktok\.com\/@[\w.-]+\/video\/(\d+)/;
+export const TIKTOK_SHORT_URL_REGEX = /^https?:\/\/vm\.tiktok\.com\/([A-Za-z0-9]+)/;
+export const TIKTOK_SHORT_URL_ROOT_REGEX = /^https?:\/\/(?:www\.)?tiktok\.com\/([A-Za-z0-9]{7,})\/?$/;
 
 export function extractVideoId(url: string): string | null {
+  // Full canonical TikTok URL with numeric ID
   const match = url.match(TIKTOK_URL_REGEX);
-  return match ? match[1] : null;
+  if (match) return match[1];
+
+  // Short vm.tiktok.com URL. Use the short code as a stable surrogate ID.
+  const short = url.match(TIKTOK_SHORT_URL_REGEX);
+  if (short) return `vm:${short[1]}`;
+
+  // Short root tiktok.com/<code> URL.
+  const shortRoot = url.match(TIKTOK_SHORT_URL_ROOT_REGEX);
+  if (shortRoot) return `short:${shortRoot[1]}`;
+
+  return null;
 }
 
 export function isValidTiktokUrl(url: string): boolean {
-  return TIKTOK_URL_REGEX.test(url);
+  return (
+    TIKTOK_URL_REGEX.test(url) ||
+    TIKTOK_SHORT_URL_REGEX.test(url) ||
+    TIKTOK_SHORT_URL_ROOT_REGEX.test(url)
+  );
 }
 
 export function toOEmbedUrl(url: string): string {
