@@ -8,6 +8,11 @@ import { Playlist } from "@/components/Playlist";
 import { AddPlaylistForm } from "@/components/AddPlaylistForm";
 import { extractVideoId, toOEmbedUrl } from "@/lib/tiktok";
 
+type TikTokOEmbedResponse = {
+  html: string;
+  // Other fields exist but are not used here
+};
+
 
 // TikTok utilities moved to src/lib/tiktok.ts
 
@@ -62,8 +67,8 @@ export default function Home() {
           if (!response.ok) {
             throw new Error("Failed to fetch oEmbed data.");
           }
-          const data = await response.json();
-          html = (data as any).html as string;
+          const data: TikTokOEmbedResponse = await response.json();
+          html = data.html;
           oembedCache.current.set(video.url, html);
         }
         if (!options.autoplay) {
@@ -121,8 +126,8 @@ export default function Home() {
             if (!html) {
               const response = await fetch(toOEmbedUrl(video.url));
               if (!response.ok) throw new Error("Failed to fetch oEmbed data.");
-              const data = await response.json();
-              html = (data as any).html as string;
+              const data: TikTokOEmbedResponse = await response.json();
+              html = data.html;
               oembedCache.current.set(video.url, html);
             }
             if (!cancelled) {
