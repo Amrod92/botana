@@ -3,7 +3,7 @@ import { PlaylistVideo, Video } from '@/types';
 
 export const usePlaylist = () => {
   const [playlist, setPlaylist] = useState<PlaylistVideo[]>([]);
-  const [currentlyPlaying, setCurrentlyPlaying] = useState<Video | null>(null);
+  const [currentlyPlaying, setCurrentlyPlaying] = useState<PlaylistVideo | null>(null);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(-1);
   const [replayCounter, setReplayCounter] = useState(0);
   const playedLoopsRef = useRef(0);
